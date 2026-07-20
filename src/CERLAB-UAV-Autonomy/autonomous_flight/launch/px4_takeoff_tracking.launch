@@ -1,0 +1,32 @@
+<launch>
+	<arg name="takeoff_height" default="1.0" />
+	<arg name="external_offboard_setpoint_topic" default="/mavros/setpoint_raw/local" />
+	<arg name="external_offboard_timeout" default="0.3" />
+	<arg name="passthrough_raw_setpoint" default="true" />
+	<arg name="raw_setpoint_mode" default="full_state" />
+	<arg name="velocity_height_position_p_x" default="0.8" />
+	<arg name="velocity_height_position_p_y" default="0.8" />
+	<arg name="velocity_height_position_p_z" default="1.0" />
+	<arg name="velocity_height_max_velocity_x" default="3.0" />
+	<arg name="velocity_height_max_velocity_y" default="3.0" />
+	<arg name="velocity_height_max_velocity_z" default="1.0" />
+
+	<rosparam file="$(find autonomous_flight)/cfg/takeoff_and_hover/flight_base.yaml" ns="autonomous_flight"/>
+	<rosparam file="$(find tracking_controller)/cfg/controller_param.yaml" ns="controller"/>
+
+	<param name="/autonomous_flight/takeoff_height" value="$(arg takeoff_height)" />
+	<param name="/autonomous_flight/use_px4_offboard" value="true" />
+	<param name="/autonomous_flight/release_control_on_goal" value="false" />
+	<param name="/autonomous_flight/enable_control_output" value="true" />
+	<param name="/autonomous_flight/listen_click_goal" value="false" />
+	<param name="/autonomous_flight/external_pose_target_topic" value="" />
+	<param name="/autonomous_flight/external_offboard_setpoint_topic" value="$(arg external_offboard_setpoint_topic)" />
+	<param name="/autonomous_flight/external_offboard_timeout" value="$(arg external_offboard_timeout)" />
+	<param name="/controller/passthrough_raw_setpoint" value="$(arg passthrough_raw_setpoint)" />
+	<param name="/controller/raw_setpoint_mode" value="$(arg raw_setpoint_mode)" />
+	<rosparam param="/controller/velocity_height_position_p" subst_value="true">[$(arg velocity_height_position_p_x), $(arg velocity_height_position_p_y), $(arg velocity_height_position_p_z)]</rosparam>
+	<rosparam param="/controller/velocity_height_max_velocity" subst_value="true">[$(arg velocity_height_max_velocity_x), $(arg velocity_height_max_velocity_y), $(arg velocity_height_max_velocity_z)]</rosparam>
+
+	<node pkg="autonomous_flight" type="takeoff_and_hover_node" name="takeoff_and_hover_px4_node" output="screen" />
+	<node pkg="tracking_controller" type="tracking_controller_node" name="tracking_controller_node" output="screen" />
+</launch>

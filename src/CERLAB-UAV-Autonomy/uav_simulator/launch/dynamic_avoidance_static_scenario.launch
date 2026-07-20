@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="verbose" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <arg name="start_avoidance" default="false"/>
+  <arg name="start_rviz" default="false"/>
+  <arg name="avoidance_launch" default="$(find autonomous_flight)/launch/dynamic_navigation_lidar.launch"/>
+
+  <arg name="world_name" default="$(find uav_simulator)/worlds/large_pillar/large_pillar_sparse_dynamic.world"/>
+
+  <arg name="point_cloud_topic" default="/livox/lidar"/>
+  <arg name="odom_topic" default="/CERLAB/quadcopter/odom"/>
+  <arg name="pose_topic" default="/CERLAB/quadcopter/pose"/>
+
+  <arg name="x" default="-23.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.1"/>
+  <arg name="Y" default="0.0"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find uav_simulator)/models:$(find livox_laser_simulation)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="GAZEBO_PLUGIN_PATH" value="$(find uav_simulator)/plugins:$(find uav_simulator)/../PX4-SITL_gazebo-classic/build:$(find livox_laser_simulation)/../../../devel/lib:$(optenv GAZEBO_PLUGIN_PATH)"/>
+
+  <include file="$(find uav_simulator)/launch/dynamic_avoidance_scenario.launch">
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="start_avoidance" value="$(arg start_avoidance)"/>
+    <arg name="start_rviz" value="$(arg start_rviz)"/>
+    <arg name="avoidance_launch" value="$(arg avoidance_launch)"/>
+    <arg name="world_name" value="$(arg world_name)"/>
+    <arg name="point_cloud_topic" value="$(arg point_cloud_topic)"/>
+    <arg name="odom_topic" value="$(arg odom_topic)"/>
+    <arg name="pose_topic" value="$(arg pose_topic)"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+    <arg name="Y" value="$(arg Y)"/>
+  </include>
+</launch>

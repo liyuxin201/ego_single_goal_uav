@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ego_single_goal</name>
+  <version>0.1.0</version>
+  <description>Standalone Task A single-goal launch and perception bridge for PX4/ego planner flight.</description>
+
+  <maintainer email="guanjiangfeng@example.com">guanjiangfeng</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>autonomous_flight</exec_depend>
+  <exec_depend>ego_planner</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>mavros_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+
+  <export>
+  </export>
+</package>

@@ -1,0 +1,14 @@
+<launch>
+	<arg name="open_rviz" default="false" />
+	<arg name="rviz_config" default="$(find onboard_detector)/rviz/lidar_detector_sim.rviz" />
+	<arg name="point_cloud_topic" default="/livox/lidar" />
+	<arg name="pose_topic" default="/mavros/local_position/pose" />
+	<arg name="odom_topic" default="/mavros/local_position/odom" />
+
+	<rosparam file="$(find onboard_detector)/cfg/lidar_detector_param.yaml" ns="/onboard_detector" />
+	<param name="/onboard_detector/point_cloud_topic" value="$(arg point_cloud_topic)" />
+	<param name="/onboard_detector/pose_topic" value="$(arg pose_topic)" />
+	<param name="/onboard_detector/odom_topic" value="$(arg odom_topic)" />
+	<node pkg="onboard_detector" type="detector_node" name="lidar_detector_node" output="screen" />
+	<node if="$(arg open_rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config)"/>
+</launch>

@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="target_uav">
+    <static>false</static>
+    <self_collide>false</self_collide>
+    <link name="base_link">
+      <gravity>false</gravity>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.02</ixx>
+          <iyy>0.02</iyy>
+          <izz>0.04</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="lidar_detection_collision">
+        <pose>0 0 0.03 0 0 0</pose>
+        <laser_retro>200</laser_retro>
+        <geometry>
+          <box>
+            <size>1.20 1.20 0.30</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="body">
+        <geometry>
+          <box>
+            <size>0.45 0.30 0.14</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.05 0.45 0.95 1</ambient>
+          <diffuse>0.05 0.45 0.95 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+
+      <visual name="arm_x">
+        <pose>0 0 0 0 1.57079632679 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.035</radius>
+            <length>1.10</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.02 0.02 0.02 1</ambient>
+          <diffuse>0.02 0.02 0.02 1</diffuse>
+        </material>
+      </visual>
+
+      <visual name="arm_y">
+        <pose>0 0 0 1.57079632679 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.035</radius>
+            <length>1.10</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.02 0.02 0.02 1</ambient>
+          <diffuse>0.02 0.02 0.02 1</diffuse>
+        </material>
+      </visual>
+
+      <visual name="rotor_front">
+        <pose>0.55 0 0.02 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.18</radius>
+            <length>0.025</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.9 0.9 0.85</ambient>
+          <diffuse>0.1 0.9 0.9 0.85</diffuse>
+        </material>
+      </visual>
+
+      <visual name="rotor_back">
+        <pose>-0.55 0 0.02 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.18</radius>
+            <length>0.025</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.9 0.9 0.85</ambient>
+          <diffuse>0.1 0.9 0.9 0.85</diffuse>
+        </material>
+      </visual>
+
+      <visual name="rotor_left">
+        <pose>0 0.55 0.02 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.18</radius>
+            <length>0.025</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.9 0.9 0.85</ambient>
+          <diffuse>0.1 0.9 0.9 0.85</diffuse>
+        </material>
+      </visual>
+
+      <visual name="rotor_right">
+        <pose>0 -0.55 0.02 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.18</radius>
+            <length>0.025</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.9 0.9 0.85</ambient>
+          <diffuse>0.1 0.9 0.9 0.85</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

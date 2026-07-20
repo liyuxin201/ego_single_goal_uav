@@ -1,0 +1,26 @@
+std_msgs/Header header
+int32 replan_id
+bool success
+string planner_mode
+
+float64 total_time_ms
+float64 search_time_ms
+float64 optimize_time_ms
+float64 st_expand_time_ms
+
+int32 st_time_layers
+int32 st_nodes_expanded
+int32 st_edges_checked
+int32 checked_obstacles
+int32 relevant_obstacles
+
+int32 pruned_collision
+int32 pruned_dominated
+int32 pruned_recovery
+int32 pruned_total
+
+int32 replan_count
+float64 min_st_distance
+float64 tracking_distance_error
+float64 relative_velocity_error
+float64 recovery_time_est

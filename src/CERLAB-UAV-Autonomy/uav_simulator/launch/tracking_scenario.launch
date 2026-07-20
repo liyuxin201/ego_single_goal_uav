@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="scenario" default="scenario1"/>
+  <arg name="scenario_dir" default="$(find uav_simulator)/config/tracking_scenarios"/>
+  <arg name="world_name" default="$(find uav_simulator)/worlds/tracking/base_empty.world"/>
+
+  <arg name="start_gazebo" default="true"/>
+  <arg name="start_px4" default="true"/>
+  <arg name="start_mavros" default="true"/>
+  <arg name="start_scenario_manager" default="true"/>
+  <arg name="start_evaluator" default="true"/>
+  <arg name="start_planner" default="false"/>
+  <arg name="planner_launch" default=""/>
+  <arg name="wait_for_uav_ready" default="true"/>
+  <arg name="wait_for_motion_start" default="true"/>
+  <arg name="motion_start_topic" default="/tracking_scenario/start_motion"/>
+  <arg name="uav_ready_min_z" default="0.8"/>
+  <arg name="uav_ready_start_delay" default="1.0"/>
+  <arg name="uav_ready_require_armed" default="true"/>
+  <arg name="uav_ready_require_offboard" default="true"/>
+
+  <arg name="paused" default="false"/>
+  <arg name="verbose" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <arg name="x" default="-9.5"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.0"/>
+  <arg name="R" default="0.0"/>
+  <arg name="P" default="0.0"/>
+  <arg name="Y" default="0.0"/>
+
+  <arg name="vehicle_model" default="px4_iris_mid360"/>
+  <arg name="sdf_model" default="$(find uav_simulator)/urdf/px4_iris_mid360.sdf"/>
+  <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
+  <arg name="respawn_mavros" default="false"/>
+  <arg name="px4_root" default="$(find uav_simulator)/../PX4-Autopilot"/>
+  <arg name="px4_sim_model" default="gazebo-classic_iris"/>
+  <arg name="px4_instance" default="0"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find uav_simulator)/models:$(find uav_simulator)/../PX4-SITL_gazebo-classic/models:$(find livox_laser_simulation)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="$(find uav_simulator)/urdf:$(optenv GAZEBO_RESOURCE_PATH)"/>
+  <env name="GAZEBO_PLUGIN_PATH" value="$(find uav_simulator)/plugins:$(find uav_simulator)/../PX4-SITL_gazebo-classic/build:$(find livox_laser_simulation)/../../../devel/lib:$(optenv GAZEBO_PLUGIN_PATH)"/>
+
+  <group if="$(arg start_px4)">
+    <node name="sitl"
+          pkg="uav_simulator"
+          type="start_px4_sitl.py"
+          args="--px4-root $(arg px4_root) --sim-model $(arg px4_sim_model) --instance $(arg px4_instance)"
+          required="true"
+          output="screen"/>
+  </group>
+
+  <group if="$(arg start_gazebo)">
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="paused" value="$(arg paused)"/>
+      <arg name="world_name" value="$(arg world_name)"/>
+      <arg name="verbose" value="$(arg verbose)"/>
+      <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+      <arg name="debug" value="$(arg debug)"/>
+      <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    <node name="spawn_px4_model"
+          pkg="gazebo_ros"
+          type="spawn_model"
+          args="-sdf -file $(arg sdf_model) -model $(arg vehicle_model) -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"
+          respawn="false"
+          output="screen"/>
+  </group>
+
+  <group if="$(arg start_mavros)">
+    <include file="$(find mavros)/launch/px4.launch">
+      <arg name="gcs_url" value=""/>
+      <arg name="fcu_url" value="$(arg fcu_url)"/>
+      <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+    </include>
+
+    <include file="$(find uav_simulator)/launch/setupTF.launch">
+      <arg name="pose_topic" value="/mavros/local_position/pose"/>
+    </include>
+  </group>
+
+  <group if="$(arg start_scenario_manager)">
+    <node name="scenario_manager" pkg="uav_simulator" type="scenario_manager.py" output="screen">
+      <param name="scenario" value="$(arg scenario)"/>
+      <param name="scenario_dir" value="$(arg scenario_dir)"/>
+      <param name="target_odom_topic" value="/target/odom"/>
+      <param name="target_path_topic" value="/target/path"/>
+      <param name="target_prediction_topic" value="/target/prediction"/>
+      <param name="dynamic_obstacles_topic" value="/dynamic_obstacles"/>
+      <param name="uav_odom_topic" value="/mavros/local_position/odom"/>
+      <param name="mavros_state_topic" value="/mavros/state"/>
+      <param name="motion_start_topic" value="$(arg motion_start_topic)"/>
+      <param name="wait_for_uav_ready" value="$(arg wait_for_uav_ready)"/>
+      <param name="wait_for_motion_start" value="$(arg wait_for_motion_start)"/>
+      <param name="uav_ready_min_z" value="$(arg uav_ready_min_z)"/>
+      <param name="uav_ready_start_delay" value="$(arg uav_ready_start_delay)"/>
+      <param name="uav_ready_require_armed" value="$(arg uav_ready_require_armed)"/>
+      <param name="uav_ready_require_offboard" value="$(arg uav_ready_require_offboard)"/>
+    </node>
+  </group>
+
+  <group if="$(arg start_evaluator)">
+    <node name="tracking_evaluator" pkg="uav_simulator" type="tracking_evaluator.py" output="screen">
+      <param name="scenario" value="$(arg scenario)"/>
+      <param name="scenario_dir" value="$(arg scenario_dir)"/>
+      <param name="uav_odom_topic" value="/mavros/local_position/odom"/>
+      <param name="target_odom_topic" value="/target/odom"/>
+      <param name="dynamic_obstacles_topic" value="/dynamic_obstacles"/>
+      <param name="planner_diagnostics_topic" value="/planner/eval_diagnostics"/>
+      <param name="planning_trajectory_topic" value="/planning/trajectory"/>
+    </node>
+  </group>
+
+  <group if="$(arg start_planner)">
+    <include file="$(arg planner_launch)"/>
+  </group>
+</launch>

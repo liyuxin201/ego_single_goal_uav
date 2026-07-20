@@ -1,0 +1,62 @@
+# ROS / catkin generated workspace files
+/build/
+/devel/
+/install/
+/log/
+/logs/
+/.catkin_tools/
+/.catkin_workspace
+
+# Local ROS runtime data
+/.ros/
+*.bag
+*.bag.active
+*.db3
+*.mcap
+
+# Python generated files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C / C++ generated files
+*.o
+*.obj
+*.a
+*.la
+*.lo
+
+# CMake generated files outside ignored build directories
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# Test and coverage outputs
+test_results/
+*.gcda
+*.gcno
+*.gcov
+.coverage
+htmlcov/
+
+# Editor / IDE local settings
+/.vscode/
+/.idea/
+*.swp
+*.swo
+*~
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Nested Git metadata from copied packages/submodules
+**/.git

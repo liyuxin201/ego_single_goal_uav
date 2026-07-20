@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="gui" default="true"/>
+  <arg name="start_target_uav" default="false"/>
+  <arg name="world_name" default="$(find uav_simulator)/worlds/large_pillar/large_pillar_dynamic_only.world"/>
+
+  <include file="$(find uav_simulator)/launch/large_pillar_start.launch">
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="world_name" value="$(arg world_name)"/>
+  </include>
+
+  <include if="$(arg start_target_uav)" file="$(find uav_simulator)/launch/large_pillar_target_uav.launch"/>
+</launch>

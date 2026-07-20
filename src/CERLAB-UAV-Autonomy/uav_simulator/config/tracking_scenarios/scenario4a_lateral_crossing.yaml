@@ -1,0 +1,56 @@
+scenario:
+  id: scenario4a
+  name: lateral_crossing_recovery
+  world: worlds/tracking/base_empty.world
+  duration: 30.0
+  z_track: 1.5
+  update_rate: 30.0
+  run_id: default
+
+uav:
+  model: px4_iris_mid360
+  initial_pose: [-9.5, 0.0, 0.0, 0.0]
+
+target:
+  type: ground_target
+  model_name: tracking_ground_target
+  radius: 0.35
+  height: 0.4
+  trajectory:
+    loop: false
+    samples: 200
+    segments:
+      - type: waypoint
+        speed: 0.9
+        points:
+          - [-8.0, 0.0, 0.0]
+          - [8.0, 0.0, 0.0]
+
+dynamic_obstacles:
+  - name: obs_crossing
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: false
+      samples: 200
+      segments:
+        - type: waypoint
+          speed: 0.9
+          points:
+            - [-4.5, -6.0, 0.0]
+            - [-4.5, 4.0, 0.0]
+
+static_obstacles_eval: []
+
+evaluation:
+  uav_radius: 0.35
+  target_radius: 0.35
+  collision_margin: 0.05
+  safety_margin: 0.30
+  tracking:
+    desired_distance: 3.0
+    min_distance: 2.0
+    max_distance: 4.5
+    max_relative_speed: 1.0
+  output_dir: /tmp/uav_tracking_eval

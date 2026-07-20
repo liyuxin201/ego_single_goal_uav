@@ -1,0 +1,56 @@
+sensor_mode: 1 # 0: depth camera, 1: lidar
+localization_mode: 1 # 0: pose, 1: odom
+
+point_cloud_topic: /livox/lidar
+point_cloud_world_frame: false
+pose_topic: /CERLAB/quadcopter/pose
+odom_topic: /CERLAB/quadcopter/odom
+
+body_to_lidar: [1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.10,
+                0.0, 0.0, 0.0, 1.0]
+
+depth_scale_factor: 1.0
+depth_min_value: 0.3
+depth_max_value: 15.0
+raycast_max_length: 15.0
+local_sensor_range: [15.0, 15.0, 5.0]
+
+# Point-cloud filtering
+voxel_occupied_thresh: 1
+ground_height: 0.2
+dbscan_min_points_cluster: 4
+dbscan_search_range_epsilon: 0.35
+
+# Tracking and classification
+history_size: 100
+time_difference: 0.1
+similarity_threshold: 0.02
+frame_skip: 3
+dynamic_velocity_threshold: 0.08
+dynamic_center_velocity_threshold: 0.08
+dynamic_voting_threshold: 0.1
+maximum_skip_ratio: 0.75
+fix_size_history_threshold: 10
+fix_size_dimension_threshold: 0.4
+
+e_p: 0.25
+e_q_pos: 0.01
+e_q_vel: 0.05
+e_q_acc: 0.05
+e_r_pos: 0.04
+e_r_vel: 0.3
+e_r_acc: 0.6
+kalman_filter_averaging_frames: 3
+
+frames_force_dynamic: 10
+frames_force_dynamic_check_range: 30
+dynamic_consistency_threshold: 1
+
+constrain_size: false
+max_dynamic_bbox_size: [3.0, 3.0, 3.0]
+
+# Unused in lidar mode, kept for shared parameter parsing.
+depth_filter_margin: 0
+depth_skip_pixel: 1

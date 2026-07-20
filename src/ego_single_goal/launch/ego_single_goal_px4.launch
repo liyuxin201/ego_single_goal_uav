@@ -1,0 +1,435 @@
+<launch>
+  <arg name="map_size_x" default="30.0"/>
+  <arg name="map_size_y" default="28.0"/>
+  <arg name="map_size_z" default="3.0"/>
+  <arg name="frame_id" default="map"/>
+
+  <arg name="odom_topic" default="/mavros/local_position/odom"/>
+  <arg name="pose_topic" default="/mavros/local_position/pose"/>
+  <arg name="raw_cloud_topic" default="/livox/lidar"/>
+  <arg name="cloud_topic" default="/world_cloud"/>
+  <arg name="enable_livox_cloud_transform" default="false"/>
+  <arg name="publish_map_world_tf" default="true"/>
+  <arg name="cloud_downsample" default="1"/>
+  <arg name="camera_pose_topic" default="/unused_camera_pose"/>
+  <arg name="depth_topic" default="/unused_depth"/>
+  <arg name="rviz" default="true"/>
+  <arg name="goal_topic" default="/move_base_simple/goal"/>
+  <arg name="planner_pose_target_topic" default="/autonomous_flight/planner_pose_target"/>
+  <arg name="px4_raw_setpoint_topic" default="/mavros/setpoint_raw/local"/>
+  <arg name="guide_path_topic" default="/competition/guide_path"/>
+  <arg name="task_a_guide_path_topic" default="/task_a/guide_path"/>
+  <arg name="task_a_candidate_guide_path_topic" default="/task_a/candidate_guide_path"/>
+  <arg name="task_a_use_candidate_guide_path" default="true"/>
+  <arg name="task_d_guide_path_topic" default="/task_d/guide_path"/>
+  <arg name="single_goal_only" default="true"/>
+  <arg name="task_a_target_ready" default="true"/>
+  <arg name="task_a_goal_input_topic" default="/task_a/final_goal"/>
+  <arg name="task_a_goal_input_use_pose_z" default="false"/>
+  <arg name="marker_topic" default="/task_a/markers"/>
+  <arg name="task_d_marker_topic" default="/task_d/markers"/>
+  <arg name="auto_task_a_waypoints" default="true"/>
+  <arg name="task_a_auto_detect" default="true"/>
+  <arg name="task_a_manual_click_enabled" default="true"/>
+  <arg name="task_a_manual_click_topic" default="/clicked_point"/>
+  <arg name="task_a_manual_click_radius" default="0.80"/>
+  <arg name="task_a_manual_cluster_tolerance" default="0.25"/>
+  <arg name="task_a_manual_min_cluster_points" default="4"/>
+  <arg name="task_a_manual_model_kind" default="auto"/>
+  <arg name="task_a_manual_click_sequence" default="true"/>
+  <arg name="task_a_manual_wall_expand_enabled" default="true"/>
+  <arg name="task_a_manual_wall_expand_length" default="3.6"/>
+  <arg name="task_a_manual_wall_expand_width" default="1.0"/>
+  <arg name="task_a_manual_wall_expand_tolerance" default="0.35"/>
+  <arg name="task_a_manual_publish_guide_path" default="false"/>
+  <arg name="task_a_manual_dimension_margin" default="0.25"/>
+  <arg name="task_a_manual_height_margin" default="0.35"/>
+  <arg name="task_a_manual_cylinder_dimension_margin" default="0.35"/>
+  <arg name="task_a_manual_cylinder_aspect_margin" default="1.0"/>
+  <arg name="task_a_manual_priority_window_margin" default="0.35"/>
+  <arg name="task_a_manual_cluster_point_ratio" default="0.60"/>
+  <arg name="task_a_calibration_file" default="$(optenv HOME /home/uavx)/.ros/task_a_gap_detector_calibration.yaml"/>
+  <arg name="task_a_use_saved_manual_calibration" default="true"/>
+  <arg name="task_a_save_manual_calibration" default="true"/>
+  <arg name="task_a_saved_prior_enabled" default="true"/>
+  <arg name="task_a_saved_prior_fast_lock" default="false"/>
+  <arg name="task_a_saved_prior_prefer_roi" default="true"/>
+  <arg name="task_a_saved_prior_margin" default="0.45"/>
+  <arg name="task_a_saved_prior_z_margin" default="0.25"/>
+  <arg name="task_a_saved_prior_gate_required" default="true"/>
+  <arg name="task_a_saved_prior_max_center_shift" default="0.45"/>
+  <arg name="task_a_saved_prior_max_model_shift" default="0.65"/>
+  <arg name="task_a_saved_prior_max_wall_yaw_shift" default="0.35"/>
+  <arg name="task_a_publish_saved_calibration_on_startup" default="false"/>
+
+  <arg name="auto_takeoff" default="false"/>
+  <arg name="enable_control_output" default="false"/>
+  <arg name="publish_px4_raw_setpoint" default="false"/>
+  <arg name="planner_pose_target_lookahead" default="0.30"/>
+  <arg name="control_target_lookahead" default="0.25"/>
+  <arg name="use_yaw_control" default="true"/>
+  <arg name="no_yaw_turning" default="true"/>
+
+  <arg name="max_vel" default="0.4"/>
+  <arg name="max_acc" default="0.6"/>
+  <arg name="desired_angular_velocity" default="0.9"/>
+  <arg name="replan_time_for_dynamic_obstacles" default="0.30"/>
+  <arg name="dynamic_collision_check_step" default="0.01"/>
+  <arg name="dynamic_collision_prediction_time" default="1.5"/>
+  <arg name="dynamic_collision_safety_margin" default="0.08"/>
+  <arg name="dynamic_collision_replan_distance" default="0.60"/>
+  <arg name="planning_horizon" default="5.0"/>
+  <arg name="map_resolution" default="0.1"/>
+  <arg name="raycast_max_length" default="15.0"/>
+  <arg name="robot_size_x" default="0.5"/>
+  <arg name="robot_size_y" default="0.5"/>
+  <arg name="robot_size_z" default="0.3"/>
+  <arg name="local_update_range_x" default="8.0"/>
+  <arg name="local_update_range_y" default="8.0"/>
+  <arg name="local_update_range_z" default="5.0"/>
+  <arg name="local_map_size_x" default="20.0"/>
+  <arg name="local_map_size_y" default="20.0"/>
+  <arg name="local_map_size_z" default="6.0"/>
+  <arg name="detector_range_x" default="20.0"/>
+  <arg name="detector_range_y" default="20.0"/>
+  <arg name="detector_range_z" default="5.0"/>
+  <arg name="detector_ground_height" default="0.2"/>
+  <arg name="dbscan_min_points_cluster" default="8"/>
+  <arg name="dbscan_search_range_epsilon" default="0.25"/>
+  <arg name="dynamic_velocity_threshold" default="0.10"/>
+  <arg name="bspline_min_height" default="0.5"/>
+  <arg name="bspline_max_height" default="1.1"/>
+  <arg name="bspline_prediction_horizon" default="2.0"/>
+  <arg name="bspline_max_path_length" default="7.0"/>
+  <arg name="bspline_distance_threshold" default="0.08"/>
+  <arg name="bspline_distance_threshold_dynamic" default="0.08"/>
+  <arg name="bspline_weight_feasibility" default="1.0"/>
+  <arg name="bspline_weight_dynamic_obstacle" default="1.2"/>
+  <arg name="poly_initial_radius" default="0.20"/>
+  <arg name="poly_constraint_radius" default="0.20"/>
+
+  <arg name="flight_type" default="1"/>
+  <arg name="gate_x" default="1.05"/>
+  <arg name="gate_y" default="-2.65"/>
+  <arg name="gate_z" default="1.0"/>
+  <arg name="goal_x" default="3.120975971221924"/>
+  <arg name="goal_y" default="-5.956602573394775"/>
+  <arg name="goal_z" default="1.0"/>
+  <arg name="transfer_x" default="10.361700057983398"/>
+  <arg name="transfer_y" default="-5.367546081542969"/>
+  <arg name="transfer_z" default="1.0"/>
+  <arg name="task_a_safe_radius" default="0.35"/>
+  <arg name="task_a_reach_radius" default="0.35"/>
+  <arg name="task_a_hover_duration" default="1.5"/>
+  <arg name="task_a_goal_republish_period" default="0.0"/>
+  <arg name="task_a_require_offboard_before_goal_publish" default="true"/>
+  <arg name="require_offboard_before_planner_target" default="true"/>
+  <arg name="task_a_takeoff_before_task" default="true"/>
+  <arg name="task_a_takeoff_height" default="$(arg goal_z)"/>
+  <arg name="task_a_takeoff_reach_radius" default="0.15"/>
+  <arg name="mavros_state_topic" default="/mavros/state"/>
+  <arg name="task_a_lock_detection" default="true"/>
+  <arg name="task_a_publish_candidate_guide_path" default="true"/>
+  <arg name="task_a_refine_duration" default="2.0"/>
+  <arg name="task_a_min_refine_matches" default="8"/>
+  <arg name="task_a_stable_center_threshold" default="0.18"/>
+  <arg name="task_a_stable_gap_threshold" default="0.15"/>
+  <arg name="task_a_max_refine_duration" default="4.0"/>
+  <arg name="task_a_cylinder_forward_window" default="0.80"/>
+  <arg name="task_a_predicted_gap_width" default="1.0"/>
+  <arg name="task_a_gap_width_min" default="0.35"/>
+  <arg name="task_a_gap_width_max" default="1.60"/>
+  <arg name="task_a_require_opposite_cylinders" default="true"/>
+  <arg name="task_a_cylinder_wall_lateral_overlap" default="0.45"/>
+  <arg name="task_a_use_odom_front_roi" default="false"/>
+  <arg name="task_a_odom_timeout" default="1.0"/>
+  <arg name="task_a_front_yaw_offset" default="0.0"/>
+  <arg name="task_a_z_min" default="0.15"/>
+  <arg name="task_a_z_max" default="2.40"/>
+  <arg name="task_a_cloud_xy_filter_enabled" default="false"/>
+  <arg name="task_a_cloud_x_min" default="-1.0"/>
+  <arg name="task_a_cloud_x_max" default="15.0"/>
+  <arg name="task_a_cloud_y_min" default="-1.0"/>
+  <arg name="task_a_cloud_y_max" default="15.0"/>
+  <arg name="task_a_forward_min" default="-0.20"/>
+  <arg name="task_a_forward_max" default="9.0"/>
+  <arg name="task_a_lateral_min" default="-5.0"/>
+  <arg name="task_a_lateral_max" default="7.0"/>
+  <arg name="task_a_voxel_size" default="0.08"/>
+  <arg name="task_a_cluster_tolerance" default="0.40"/>
+  <arg name="task_a_min_cluster_points" default="6"/>
+  <arg name="task_a_wall_length" default="1.0"/>
+  <arg name="task_a_wall_width" default="0.50"/>
+  <arg name="task_a_cylinder_diameter" default="0.40"/>
+  <arg name="task_a_obstacle_height" default="1.0"/>
+  <arg name="task_a_min_structure_height" default="0.45"/>
+  <arg name="task_a_wall_length_min" default="0.45"/>
+  <arg name="task_a_wall_length_max" default="3.6"/>
+  <arg name="task_a_wall_width_min" default="0.04"/>
+  <arg name="task_a_wall_width_max" default="1.00"/>
+  <arg name="task_a_wall_aspect_min" default="1.20"/>
+  <arg name="task_a_wall_face_enabled" default="true"/>
+  <arg name="task_a_wall_face_inlier_threshold" default="0.10"/>
+  <arg name="task_a_wall_face_min_points" default="6"/>
+  <arg name="task_a_wall_face_min_length" default="0.35"/>
+  <arg name="task_a_wall_face_max_thickness" default="0.30"/>
+  <arg name="task_a_wall_max_faces" default="2"/>
+  <arg name="task_a_wall_infer_length_margin" default="0.20"/>
+  <arg name="task_a_wall_infer_height_margin" default="0.05"/>
+  <arg name="task_a_wall_infer_depth_from_face" default="true"/>
+  <arg name="task_a_wall_size_from_cloud" default="true"/>
+  <arg name="task_a_select_nearest_gap" default="true"/>
+  <arg name="task_a_wall_observer_uses_odom" default="true"/>
+  <arg name="task_a_append_final_goal" default="false"/>
+  <arg name="task_a_update_goal_from_guide" default="true"/>
+  <arg name="task_a_cylinder_length_min" default="0.12"/>
+  <arg name="task_a_cylinder_length_max" default="1.05"/>
+  <arg name="task_a_cylinder_width_min" default="0.08"/>
+  <arg name="task_a_cylinder_width_max" default="0.95"/>
+  <arg name="task_a_cylinder_aspect_max" default="3.60"/>
+  <arg name="obstacles_inflation" default="0.20"/>
+  <arg name="optimization_dist0" default="0.20"/>
+
+  <node if="$(arg publish_map_world_tf)"
+        pkg="tf"
+        type="static_transform_publisher"
+        name="map_to_world_identity"
+        args="0 0 0 0 0 0 map world 100"/>
+
+  <group if="$(arg rviz)">
+    <node name="rviz"
+          pkg="rviz"
+          type="rviz"
+          args="-d $(find ego_single_goal)/rviz/task_a.rviz"
+          required="true"/>
+  </group>
+
+  <node if="$(arg enable_livox_cloud_transform)"
+        pkg="ego_single_goal"
+        name="livox_cloud_to_ego_world"
+        type="livox_cloud_to_ego_world.py"
+        output="screen">
+    <param name="input_topic" value="$(arg raw_cloud_topic)"/>
+    <param name="output_topic" value="$(arg cloud_topic)"/>
+    <param name="odom_topic" value="$(arg odom_topic)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="downsample" value="$(arg cloud_downsample)"/>
+    <param name="sensor_offset_x" value="0.0"/>
+    <param name="sensor_offset_y" value="0.0"/>
+    <param name="sensor_offset_z" value="0.10"/>
+  </node>
+
+  <rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/flight_base_lidar.yaml" ns="autonomous_flight"/>
+  <rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/planner_param.yaml"/>
+  <rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/mapping_lidar_param.yaml" ns="/dynamic_map"/>
+  <rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/dynamic_detector_lidar_param.yaml" ns="/onboard_detector"/>
+
+  <param name="/autonomous_flight/use_px4_offboard" value="true"/>
+  <param name="/autonomous_flight/auto_takeoff" value="$(arg auto_takeoff)"/>
+  <param name="/autonomous_flight/release_control_on_goal" value="false"/>
+  <param name="/autonomous_flight/enable_control_output" value="$(arg enable_control_output)"/>
+  <param name="/autonomous_flight/listen_click_goal" value="true"/>
+  <param name="/autonomous_flight/goal_topic" value="$(arg goal_topic)"/>
+  <param name="/autonomous_flight/external_pose_target_topic" value=""/>
+  <param name="/autonomous_flight/planner_pose_target_topic" value="$(arg planner_pose_target_topic)"/>
+  <param name="/autonomous_flight/planner_pose_target_lookahead" value="$(arg planner_pose_target_lookahead)"/>
+  <param name="/autonomous_flight/require_offboard_before_planner_target" value="$(arg require_offboard_before_planner_target)"/>
+  <param name="/autonomous_flight/control_target_lookahead" value="$(arg control_target_lookahead)"/>
+  <param name="/autonomous_flight/publish_px4_raw_setpoint" value="$(arg publish_px4_raw_setpoint)"/>
+  <param name="/autonomous_flight/px4_raw_setpoint_topic" value="$(arg px4_raw_setpoint_topic)"/>
+  <param name="/autonomous_flight/use_external_guide_path" value="true"/>
+  <param name="/autonomous_flight/external_guide_path_topic" value="$(arg guide_path_topic)"/>
+  <param name="/autonomous_flight/use_yaw_control" value="$(arg use_yaw_control)"/>
+  <param name="/autonomous_flight/no_yaw_turning" value="$(arg no_yaw_turning)"/>
+  <param name="/autonomous_flight/takeoff_height" value="$(arg task_a_takeoff_height)"/>
+  <param name="/autonomous_flight/desired_velocity" value="$(arg max_vel)"/>
+  <param name="/autonomous_flight/desired_acceleration" value="$(arg max_acc)"/>
+  <param name="/autonomous_flight/desired_angular_velocity" value="$(arg desired_angular_velocity)"/>
+  <param name="/autonomous_flight/replan_time_for_dynamic_obstacles" value="$(arg replan_time_for_dynamic_obstacles)"/>
+  <param name="/autonomous_flight/dynamic_collision_check_step" value="$(arg dynamic_collision_check_step)"/>
+  <param name="/autonomous_flight/dynamic_collision_prediction_time" value="$(arg dynamic_collision_prediction_time)"/>
+  <param name="/autonomous_flight/dynamic_collision_safety_margin" value="$(arg dynamic_collision_safety_margin)"/>
+  <param name="/autonomous_flight/dynamic_collision_replan_distance" value="$(arg dynamic_collision_replan_distance)"/>
+  <param name="/rrt/map_resolution" value="$(arg map_resolution)"/>
+  <param name="/poly_traj/initial_radius" value="$(arg poly_initial_radius)"/>
+  <param name="/poly_traj/constraint_radius" value="$(arg poly_constraint_radius)"/>
+
+  <param name="/dynamic_map/point_cloud_topic" value="$(arg cloud_topic)"/>
+  <param name="/dynamic_map/point_cloud_world_frame" value="true"/>
+  <param name="/dynamic_map/odom_topic" value="$(arg odom_topic)"/>
+  <param name="/dynamic_map/pose_topic" value="$(arg pose_topic)"/>
+  <param name="/dynamic_map/map_resolution" value="$(arg map_resolution)"/>
+  <param name="/dynamic_map/raycast_max_length" value="$(arg raycast_max_length)"/>
+  <rosparam param="/dynamic_map/robot_size" subst_value="true">[$(arg robot_size_x), $(arg robot_size_y), $(arg robot_size_z)]</rosparam>
+  <rosparam param="/dynamic_map/local_update_range" subst_value="true">[$(arg local_update_range_x), $(arg local_update_range_y), $(arg local_update_range_z)]</rosparam>
+  <rosparam param="/dynamic_map/local_map_size" subst_value="true">[$(arg local_map_size_x), $(arg local_map_size_y), $(arg local_map_size_z)]</rosparam>
+  <param name="/onboard_detector/point_cloud_topic" value="$(arg cloud_topic)"/>
+  <param name="/onboard_detector/point_cloud_world_frame" value="true"/>
+  <param name="/onboard_detector/odom_topic" value="$(arg odom_topic)"/>
+  <param name="/onboard_detector/pose_topic" value="$(arg pose_topic)"/>
+  <rosparam param="/onboard_detector/local_sensor_range" subst_value="true">[$(arg detector_range_x), $(arg detector_range_y), $(arg detector_range_z)]</rosparam>
+  <param name="/onboard_detector/ground_height" value="$(arg detector_ground_height)"/>
+  <param name="/onboard_detector/dbscan_min_points_cluster" value="$(arg dbscan_min_points_cluster)"/>
+  <param name="/onboard_detector/dbscan_search_range_epsilon" value="$(arg dbscan_search_range_epsilon)"/>
+  <param name="/onboard_detector/dynamic_velocity_threshold" value="$(arg dynamic_velocity_threshold)"/>
+  <param name="/bspline_traj/distance_threshold" value="$(arg bspline_distance_threshold)"/>
+  <param name="/bspline_traj/min_height" value="$(arg bspline_min_height)"/>
+  <param name="/bspline_traj/max_height" value="$(arg bspline_max_height)"/>
+  <param name="/bspline_traj/prediction_horizon" value="$(arg bspline_prediction_horizon)"/>
+  <param name="/bspline_traj/max_path_length" value="$(arg bspline_max_path_length)"/>
+  <param name="/bspline_traj/distance_threshold_dynamic" value="$(arg bspline_distance_threshold_dynamic)"/>
+  <param name="/bspline_traj/weight_feasibility" value="$(arg bspline_weight_feasibility)"/>
+  <param name="/bspline_traj/weight_dynamic_obstacle" value="$(arg bspline_weight_dynamic_obstacle)"/>
+
+  <node pkg="autonomous_flight"
+        type="dynamic_navigation_node"
+        name="dynamic_navigation_lidar_node"
+        output="screen"/>
+
+  <node pkg="ego_single_goal"
+        name="task_a_gap_detector"
+        type="task_a_gap_detector.py"
+        output="screen">
+    <param name="cloud_topic" value="$(arg cloud_topic)"/>
+    <param name="guide_path_topic" value="$(arg task_a_guide_path_topic)"/>
+    <param name="candidate_guide_path_topic" value="$(arg task_a_candidate_guide_path_topic)"/>
+    <param name="marker_topic" value="$(arg marker_topic)"/>
+    <param name="odom_topic" value="$(arg odom_topic)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="safe_radius" value="$(arg task_a_safe_radius)"/>
+    <param name="goal_x" value="$(arg goal_x)"/>
+    <param name="goal_y" value="$(arg goal_y)"/>
+    <param name="goal_z" value="$(arg goal_z)"/>
+    <param name="target_ready" value="$(arg task_a_target_ready)"/>
+    <param name="goal_input_topic" value="$(arg task_a_goal_input_topic)"/>
+    <param name="goal_input_use_pose_z" value="$(arg task_a_goal_input_use_pose_z)"/>
+    <param name="auto_detect" value="$(arg task_a_auto_detect)"/>
+    <param name="manual_click_enabled" value="$(arg task_a_manual_click_enabled)"/>
+    <param name="manual_click_topic" value="$(arg task_a_manual_click_topic)"/>
+    <param name="manual_click_radius" value="$(arg task_a_manual_click_radius)"/>
+    <param name="manual_cluster_tolerance" value="$(arg task_a_manual_cluster_tolerance)"/>
+    <param name="manual_min_cluster_points" value="$(arg task_a_manual_min_cluster_points)"/>
+    <param name="manual_model_kind" value="$(arg task_a_manual_model_kind)"/>
+    <param name="manual_click_sequence" value="$(arg task_a_manual_click_sequence)"/>
+    <param name="manual_wall_expand_enabled" value="$(arg task_a_manual_wall_expand_enabled)"/>
+    <param name="manual_wall_expand_length" value="$(arg task_a_manual_wall_expand_length)"/>
+    <param name="manual_wall_expand_width" value="$(arg task_a_manual_wall_expand_width)"/>
+    <param name="manual_wall_expand_tolerance" value="$(arg task_a_manual_wall_expand_tolerance)"/>
+    <param name="manual_publish_guide_path" value="$(arg task_a_manual_publish_guide_path)"/>
+    <param name="manual_dimension_margin" value="$(arg task_a_manual_dimension_margin)"/>
+    <param name="manual_height_margin" value="$(arg task_a_manual_height_margin)"/>
+    <param name="manual_cylinder_dimension_margin" value="$(arg task_a_manual_cylinder_dimension_margin)"/>
+    <param name="manual_cylinder_aspect_margin" value="$(arg task_a_manual_cylinder_aspect_margin)"/>
+    <param name="manual_priority_window_margin" value="$(arg task_a_manual_priority_window_margin)"/>
+    <param name="manual_cluster_point_ratio" value="$(arg task_a_manual_cluster_point_ratio)"/>
+    <param name="calibration_file" value="$(arg task_a_calibration_file)"/>
+    <param name="use_saved_manual_calibration" value="$(arg task_a_use_saved_manual_calibration)"/>
+    <param name="save_manual_calibration" value="$(arg task_a_save_manual_calibration)"/>
+    <param name="saved_prior_enabled" value="$(arg task_a_saved_prior_enabled)"/>
+    <param name="saved_prior_fast_lock" value="$(arg task_a_saved_prior_fast_lock)"/>
+    <param name="saved_prior_prefer_roi" value="$(arg task_a_saved_prior_prefer_roi)"/>
+    <param name="saved_prior_margin" value="$(arg task_a_saved_prior_margin)"/>
+    <param name="saved_prior_z_margin" value="$(arg task_a_saved_prior_z_margin)"/>
+    <param name="saved_prior_gate_required" value="$(arg task_a_saved_prior_gate_required)"/>
+    <param name="saved_prior_max_center_shift" value="$(arg task_a_saved_prior_max_center_shift)"/>
+    <param name="saved_prior_max_model_shift" value="$(arg task_a_saved_prior_max_model_shift)"/>
+    <param name="saved_prior_max_wall_yaw_shift" value="$(arg task_a_saved_prior_max_wall_yaw_shift)"/>
+    <param name="publish_saved_calibration_on_startup" value="$(arg task_a_publish_saved_calibration_on_startup)"/>
+    <param name="lock_detection" value="$(arg task_a_lock_detection)"/>
+    <param name="publish_candidate_guide_path" value="$(arg task_a_publish_candidate_guide_path)"/>
+    <param name="refine_duration" value="$(arg task_a_refine_duration)"/>
+    <param name="min_refine_matches" value="$(arg task_a_min_refine_matches)"/>
+    <param name="stable_center_threshold" value="$(arg task_a_stable_center_threshold)"/>
+    <param name="stable_gap_threshold" value="$(arg task_a_stable_gap_threshold)"/>
+    <param name="max_refine_duration" value="$(arg task_a_max_refine_duration)"/>
+    <param name="cylinder_forward_window" value="$(arg task_a_cylinder_forward_window)"/>
+    <param name="predicted_gap_width" value="$(arg task_a_predicted_gap_width)"/>
+    <param name="gap_width_min" value="$(arg task_a_gap_width_min)"/>
+    <param name="gap_width_max" value="$(arg task_a_gap_width_max)"/>
+    <param name="require_opposite_cylinders" value="$(arg task_a_require_opposite_cylinders)"/>
+    <param name="cylinder_wall_lateral_overlap" value="$(arg task_a_cylinder_wall_lateral_overlap)"/>
+    <param name="use_odom_front_roi" value="$(arg task_a_use_odom_front_roi)"/>
+    <param name="odom_timeout" value="$(arg task_a_odom_timeout)"/>
+    <param name="front_yaw_offset" value="$(arg task_a_front_yaw_offset)"/>
+    <param name="z_min" value="$(arg task_a_z_min)"/>
+    <param name="z_max" value="$(arg task_a_z_max)"/>
+    <param name="cloud_xy_filter_enabled" value="$(arg task_a_cloud_xy_filter_enabled)"/>
+    <param name="cloud_x_min" value="$(arg task_a_cloud_x_min)"/>
+    <param name="cloud_x_max" value="$(arg task_a_cloud_x_max)"/>
+    <param name="cloud_y_min" value="$(arg task_a_cloud_y_min)"/>
+    <param name="cloud_y_max" value="$(arg task_a_cloud_y_max)"/>
+    <param name="forward_min" value="$(arg task_a_forward_min)"/>
+    <param name="forward_max" value="$(arg task_a_forward_max)"/>
+    <param name="lateral_min" value="$(arg task_a_lateral_min)"/>
+    <param name="lateral_max" value="$(arg task_a_lateral_max)"/>
+    <param name="voxel_size" value="$(arg task_a_voxel_size)"/>
+    <param name="cluster_tolerance" value="$(arg task_a_cluster_tolerance)"/>
+    <param name="min_cluster_points" value="$(arg task_a_min_cluster_points)"/>
+    <param name="wall_length" value="$(arg task_a_wall_length)"/>
+    <param name="wall_width" value="$(arg task_a_wall_width)"/>
+    <param name="cylinder_diameter" value="$(arg task_a_cylinder_diameter)"/>
+    <param name="obstacle_height" value="$(arg task_a_obstacle_height)"/>
+    <param name="min_structure_height" value="$(arg task_a_min_structure_height)"/>
+    <param name="wall_length_min" value="$(arg task_a_wall_length_min)"/>
+    <param name="wall_length_max" value="$(arg task_a_wall_length_max)"/>
+    <param name="wall_width_min" value="$(arg task_a_wall_width_min)"/>
+    <param name="wall_width_max" value="$(arg task_a_wall_width_max)"/>
+    <param name="wall_aspect_min" value="$(arg task_a_wall_aspect_min)"/>
+    <param name="wall_face_enabled" value="$(arg task_a_wall_face_enabled)"/>
+    <param name="wall_face_inlier_threshold" value="$(arg task_a_wall_face_inlier_threshold)"/>
+    <param name="wall_face_min_points" value="$(arg task_a_wall_face_min_points)"/>
+    <param name="wall_face_min_length" value="$(arg task_a_wall_face_min_length)"/>
+    <param name="wall_face_max_thickness" value="$(arg task_a_wall_face_max_thickness)"/>
+    <param name="wall_max_faces" value="$(arg task_a_wall_max_faces)"/>
+    <param name="wall_infer_length_margin" value="$(arg task_a_wall_infer_length_margin)"/>
+    <param name="wall_infer_height_margin" value="$(arg task_a_wall_infer_height_margin)"/>
+    <param name="wall_infer_depth_from_face" value="$(arg task_a_wall_infer_depth_from_face)"/>
+    <param name="wall_size_from_cloud" value="$(arg task_a_wall_size_from_cloud)"/>
+    <param name="select_nearest_gap" value="$(arg task_a_select_nearest_gap)"/>
+    <param name="wall_observer_uses_odom" value="$(arg task_a_wall_observer_uses_odom)"/>
+    <param name="append_final_goal" value="$(arg task_a_append_final_goal)"/>
+    <param name="cylinder_length_min" value="$(arg task_a_cylinder_length_min)"/>
+    <param name="cylinder_length_max" value="$(arg task_a_cylinder_length_max)"/>
+    <param name="cylinder_width_min" value="$(arg task_a_cylinder_width_min)"/>
+    <param name="cylinder_width_max" value="$(arg task_a_cylinder_width_max)"/>
+    <param name="cylinder_aspect_max" value="$(arg task_a_cylinder_aspect_max)"/>
+    <param name="forward_axis_x" value="0.0"/>
+    <param name="forward_axis_y" value="-1.0"/>
+    <param name="lateral_axis_x" value="1.0"/>
+    <param name="lateral_axis_y" value="0.0"/>
+  </node>
+
+  <node if="$(arg auto_task_a_waypoints)"
+        pkg="ego_single_goal"
+        name="task_a_waypoint_manager"
+        type="task_a_waypoint_manager.py"
+        output="screen">
+    <param name="odom_topic" value="$(arg odom_topic)"/>
+    <param name="task_a_guide_path_topic" value="$(arg task_a_guide_path_topic)"/>
+    <param name="task_a_candidate_guide_path_topic" value="$(arg task_a_candidate_guide_path_topic)"/>
+    <param name="use_candidate_guide_path" value="$(arg task_a_use_candidate_guide_path)"/>
+    <param name="task_d_guide_path_topic" value="$(arg task_d_guide_path_topic)"/>
+    <param name="planner_guide_path_topic" value="$(arg guide_path_topic)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="goal_x" value="$(arg goal_x)"/>
+    <param name="goal_y" value="$(arg goal_y)"/>
+    <param name="goal_z" value="$(arg goal_z)"/>
+    <param name="target_ready" value="$(arg task_a_target_ready)"/>
+    <param name="goal_input_topic" value="$(arg task_a_goal_input_topic)"/>
+    <param name="goal_input_use_pose_z" value="$(arg task_a_goal_input_use_pose_z)"/>
+    <param name="transfer_x" value="$(arg transfer_x)"/>
+    <param name="transfer_y" value="$(arg transfer_y)"/>
+    <param name="transfer_z" value="$(arg transfer_z)"/>
+    <param name="reach_radius" value="$(arg task_a_reach_radius)"/>
+    <param name="goal_republish_period" value="$(arg task_a_goal_republish_period)"/>
+    <param name="takeoff_before_task" value="$(arg task_a_takeoff_before_task)"/>
+    <param name="takeoff_height" value="$(arg task_a_takeoff_height)"/>
+    <param name="takeoff_reach_radius" value="$(arg task_a_takeoff_reach_radius)"/>
+    <param name="require_offboard_before_goal_publish" value="$(arg task_a_require_offboard_before_goal_publish)"/>
+    <param name="mavros_state_topic" value="$(arg mavros_state_topic)"/>
+    <param name="single_goal_only" value="$(arg single_goal_only)"/>
+    <param name="update_task_a_goal_from_guide" value="$(arg task_a_update_goal_from_guide)"/>
+    <param name="goal_topic" value="$(arg goal_topic)"/>
+  </node>
+
+</launch>

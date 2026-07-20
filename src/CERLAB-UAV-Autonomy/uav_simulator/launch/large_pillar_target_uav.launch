@@ -1,0 +1,36 @@
+<launch>
+  <arg name="target_uav_model" default="tracking_target_uav"/>
+  <arg name="target_uav_x" default="-18.0"/>
+  <arg name="target_uav_y" default="0.0"/>
+  <arg name="target_uav_z" default="1.4"/>
+  <arg name="target_uav_Y" default="0.0"/>
+  <arg name="target_uav_speed" default="1.2"/>
+  <arg name="target_uav_loop" default="true"/>
+  <arg name="target_uav_rate" default="30.0"/>
+  <arg name="target_uav_prediction_horizon" default="8.0"/>
+  <arg name="target_uav_prediction_dt" default="0.5"/>
+  <arg name="target_uav_odom_topic" default="/tracking_target/odom"/>
+  <arg name="target_uav_path_topic" default="/tracking_target/path"/>
+  <arg name="target_uav_prediction_topic" default="/tracking_target/prediction"/>
+  <arg name="target_uav_waypoints" default="-18,0,1.4; -14,5,1.5; -8,10,1.4; -1,12,1.6; 6,9,1.5; 12,4,1.4; 20,3,1.6; 23,-5,1.5; 17,-11,1.4; 8,-14,1.6; -1,-12,1.5; -10,-7,1.4; -17,-2,1.5; -18,0,1.4"/>
+
+  <node name="spawn_target_uav_model"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        args="-sdf -file $(find uav_simulator)/models/target_uav/model.sdf -model $(arg target_uav_model) -x $(arg target_uav_x) -y $(arg target_uav_y) -z $(arg target_uav_z) -Y $(arg target_uav_Y)"
+        respawn="false"/>
+
+  <node name="target_uav_controller" pkg="uav_simulator" type="target_uav_controller.py" output="screen">
+    <param name="model_name" value="$(arg target_uav_model)"/>
+    <param name="frame_id" value="world"/>
+    <param name="waypoints" value="$(arg target_uav_waypoints)"/>
+    <param name="speed" value="$(arg target_uav_speed)" type="double"/>
+    <param name="loop" value="$(arg target_uav_loop)" type="bool"/>
+    <param name="rate" value="$(arg target_uav_rate)" type="double"/>
+    <param name="prediction_horizon" value="$(arg target_uav_prediction_horizon)" type="double"/>
+    <param name="prediction_dt" value="$(arg target_uav_prediction_dt)" type="double"/>
+    <param name="odom_topic" value="$(arg target_uav_odom_topic)"/>
+    <param name="path_topic" value="$(arg target_uav_path_topic)"/>
+    <param name="prediction_topic" value="$(arg target_uav_prediction_topic)"/>
+  </node>
+</launch>

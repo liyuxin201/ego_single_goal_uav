@@ -1,0 +1,120 @@
+<launch>
+	<arg name="odom_topic" default="/mavros/local_position/odom" />
+	<arg name="pose_topic" default="/mavros/local_position/pose" />
+	<arg name="open_rviz" default="true" />
+	<arg name="rviz_config" default="$(find autonomous_flight)/rviz/dynamic_navigation_fake2d.rviz" />
+	<arg name="auto_goal" default="false" />
+	<arg name="auto_takeoff" default="false" />
+	<arg name="planner_pose_target_topic" default="/autonomous_flight/planner_pose_target" />
+	<arg name="dynamic_obstacle_truth_topic" default="/large_pillar/dynamic_obstacles" />
+	<arg name="dynamic_obstacle_truth_marker_topic" default="/onboard_detector/GT_obstacle_bbox" />
+	<arg name="planner_pose_target_lookahead" default="0.45" />
+	<arg name="use_yaw_control" default="true" />
+	<arg name="no_yaw_turning" default="false" />
+	<arg name="goal_x" default="8.0" />
+	<arg name="goal_y" default="0.0" />
+	<arg name="goal_z" default="1.0" />
+	<arg name="goal_yaw" default="0.0" />
+	<arg name="goal_ready_z" default="0.8" />
+	<arg name="goal_delay" default="1.0" />
+	<arg name="takeoff_height" default="1.0" />
+	<arg name="desired_velocity" default="1.5" />
+	<arg name="desired_acceleration" default="1.5" />
+	<arg name="desired_angular_velocity" default="0.8" />
+	<arg name="replan_time_for_dynamic_obstacles" default="0.1" />
+	<arg name="dynamic_collision_check_step" default="0.03" />
+	<arg name="dynamic_collision_prediction_time" default="2.0" />
+	<arg name="dynamic_collision_safety_margin" default="0.8" />
+	<arg name="dynamic_collision_replan_distance" default="0.0" />
+	<arg name="robot_size_x" default="0.5" />
+	<arg name="robot_size_y" default="0.5" />
+	<arg name="robot_size_z" default="0.3" />
+	<arg name="map_resolution" default="0.1" />
+	<arg name="raycast_max_length" default="10.0" />
+	<arg name="local_update_range_x" default="10.0" />
+	<arg name="local_update_range_y" default="10.0" />
+	<arg name="local_update_range_z" default="3.0" />
+	<arg name="local_map_size_x" default="24.0" />
+	<arg name="local_map_size_y" default="24.0" />
+	<arg name="local_map_size_z" default="4.0" />
+	<arg name="color_distance" default="12.0" />
+	<arg name="target_obstacle" default="[person, obstacle]" />
+	<arg name="bspline_min_height" default="0.7" />
+	<arg name="bspline_max_height" default="1.3" />
+	<arg name="bspline_prediction_horizon" default="2.0" />
+	<arg name="bspline_max_path_length" default="7.0" />
+	<arg name="bspline_distance_threshold" default="0.55" />
+	<arg name="bspline_distance_threshold_dynamic" default="0.7" />
+	<arg name="bspline_weight_feasibility" default="1.0" />
+	<arg name="bspline_weight_dynamic_obstacle" default="3.0" />
+	<arg name="poly_initial_radius" default="0.6" />
+	<arg name="poly_constraint_radius" default="0.6" />
+
+	<node if="$(arg auto_goal)" pkg="autonomous_flight" type="publish_nav_goal.py" name="publish_nav_goal" output="screen">
+		<param name="odom_topic" value="$(arg odom_topic)" />
+		<param name="goal_x" value="$(arg goal_x)" />
+		<param name="goal_y" value="$(arg goal_y)" />
+		<param name="goal_z" value="$(arg goal_z)" />
+		<param name="goal_yaw" value="$(arg goal_yaw)" />
+		<param name="ready_z" value="$(arg goal_ready_z)" />
+		<param name="delay" value="$(arg goal_delay)" />
+	</node>
+
+	<rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/fake_detector_param.yaml" />
+	<rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/flight_base.yaml" ns="autonomous_flight"/>
+	<rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/planner_param.yaml" />
+	<rosparam file="$(find autonomous_flight)/cfg/dynamic_navigation/mapping_param.yaml" ns="/dynamic_map" />
+
+	<param name="/autonomous_flight/use_fake_detector" value="true" />
+	<param name="/autonomous_flight/use_dynamic_obstacle_truth_topic" value="true" />
+	<param name="/autonomous_flight/dynamic_obstacle_truth_topic" value="$(arg dynamic_obstacle_truth_topic)" />
+	<param name="/autonomous_flight/dynamic_obstacle_truth_marker_topic" value="$(arg dynamic_obstacle_truth_marker_topic)" />
+	<param name="/autonomous_flight/use_px4_offboard" value="true" />
+	<param name="/autonomous_flight/auto_takeoff" value="$(arg auto_takeoff)" />
+	<param name="/autonomous_flight/release_control_on_goal" value="false" />
+	<param name="/autonomous_flight/enable_control_output" value="false" />
+	<param name="/autonomous_flight/listen_click_goal" value="true" />
+	<param name="/autonomous_flight/goal_topic" value="/move_base_simple/goal" />
+	<param name="/autonomous_flight/external_pose_target_topic" value="" />
+	<param name="/autonomous_flight/planner_pose_target_topic" value="$(arg planner_pose_target_topic)" />
+	<param name="/autonomous_flight/planner_pose_target_lookahead" value="$(arg planner_pose_target_lookahead)" />
+	<param name="/autonomous_flight/use_yaw_control" value="$(arg use_yaw_control)" />
+	<param name="/autonomous_flight/no_yaw_turning" value="$(arg no_yaw_turning)" />
+	<param name="/autonomous_flight/takeoff_height" value="$(arg takeoff_height)" />
+	<param name="/autonomous_flight/desired_velocity" value="$(arg desired_velocity)" />
+	<param name="/autonomous_flight/desired_acceleration" value="$(arg desired_acceleration)" />
+	<param name="/autonomous_flight/desired_angular_velocity" value="$(arg desired_angular_velocity)" />
+	<param name="/autonomous_flight/replan_time_for_dynamic_obstacles" value="$(arg replan_time_for_dynamic_obstacles)" />
+	<param name="/autonomous_flight/dynamic_collision_check_step" value="$(arg dynamic_collision_check_step)" />
+	<param name="/autonomous_flight/dynamic_collision_prediction_time" value="$(arg dynamic_collision_prediction_time)" />
+	<param name="/autonomous_flight/dynamic_collision_safety_margin" value="$(arg dynamic_collision_safety_margin)" />
+	<param name="/autonomous_flight/dynamic_collision_replan_distance" value="$(arg dynamic_collision_replan_distance)" />
+
+	<param name="/rrt/map_resolution" value="$(arg map_resolution)" />
+	<param name="/poly_traj/initial_radius" value="$(arg poly_initial_radius)" />
+	<param name="/poly_traj/constraint_radius" value="$(arg poly_constraint_radius)" />
+
+	<param name="/dynamic_map/odom_topic" value="$(arg odom_topic)" />
+	<param name="/dynamic_map/pose_topic" value="$(arg pose_topic)" />
+	<param name="/dynamic_map/map_resolution" value="$(arg map_resolution)" />
+	<param name="/dynamic_map/raycast_max_length" value="$(arg raycast_max_length)" />
+	<rosparam param="/dynamic_map/robot_size" subst_value="true">[$(arg robot_size_x), $(arg robot_size_y), $(arg robot_size_z)]</rosparam>
+	<rosparam param="/dynamic_map/local_update_range" subst_value="true">[$(arg local_update_range_x), $(arg local_update_range_y), $(arg local_update_range_z)]</rosparam>
+	<rosparam param="/dynamic_map/local_map_size" subst_value="true">[$(arg local_map_size_x), $(arg local_map_size_y), $(arg local_map_size_z)]</rosparam>
+
+	<param name="odom_topic" value="$(arg odom_topic)" />
+	<param name="color_distance" value="$(arg color_distance)" />
+	<rosparam param="target_obstacle" subst_value="true">$(arg target_obstacle)</rosparam>
+
+	<param name="/bspline_traj/distance_threshold" value="$(arg bspline_distance_threshold)" />
+	<param name="/bspline_traj/min_height" value="$(arg bspline_min_height)" />
+	<param name="/bspline_traj/max_height" value="$(arg bspline_max_height)" />
+	<param name="/bspline_traj/prediction_horizon" value="$(arg bspline_prediction_horizon)" />
+	<param name="/bspline_traj/max_path_length" value="$(arg bspline_max_path_length)" />
+	<param name="/bspline_traj/distance_threshold_dynamic" value="$(arg bspline_distance_threshold_dynamic)" />
+	<param name="/bspline_traj/weight_feasibility" value="$(arg bspline_weight_feasibility)" />
+	<param name="/bspline_traj/weight_dynamic_obstacle" value="$(arg bspline_weight_dynamic_obstacle)" />
+
+	<node pkg="autonomous_flight" type="dynamic_navigation_node" name="dynamic_navigation_fake2d_node" output="screen" />
+	<node if="$(arg open_rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config)" />
+</launch>

@@ -1,0 +1,10 @@
+<launch>
+    <arg name="open_rviz" default="true" />
+    <arg name="rviz_config" default="$(find onboard_detector)/rviz/lidar_k_detector.rviz" />
+
+    <rosparam file="$(find onboard_detector)/cfg/lidar_k_detector_param.yaml" ns="/onboard_detector" />
+
+    <node pkg="onboard_detector" type="detector_node" name="lidar_k_detector_node" output="screen" />
+
+    <node if="$(arg open_rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config)" />
+</launch>

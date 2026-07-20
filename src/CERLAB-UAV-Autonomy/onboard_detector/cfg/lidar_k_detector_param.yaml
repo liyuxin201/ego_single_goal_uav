@@ -1,0 +1,57 @@
+sensor_mode: 1 # 0: depth camera, 1: lidar
+localization_mode: 0 # 0: pose, 1: odom
+
+point_cloud_topic: /world_cloud
+point_cloud_world_frame: true
+pose_topic: /mavros/local_position/pose
+odom_topic: /mavros/local_position/odom
+
+body_to_lidar: [1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0]
+
+depth_scale_factor: 1.0
+depth_min_value: 0.3
+depth_max_value: 20.0
+raycast_max_length: 20.0
+local_sensor_range: [20.0, 20.0, 6.0]
+
+# Point-cloud filtering
+voxel_occupied_thresh: 1
+ground_height: -3.2
+dbscan_min_points_cluster: 10
+dbscan_search_range_epsilon: 0.35
+
+# Tracking and classification
+history_size: 100
+time_difference: 0.1
+similarity_threshold: 0.02
+frame_skip: 2
+dynamic_velocity_threshold: 0.10
+dynamic_center_velocity_threshold: 0.10
+dynamic_voting_threshold: 0.10
+maximum_skip_ratio: 0.80
+fix_size_history_threshold: 6
+fix_size_dimension_threshold: 0.6
+
+e_p: 0.25
+e_q_pos: 0.01
+e_q_vel: 0.05
+e_q_acc: 0.05
+e_r_pos: 0.04
+e_r_vel: 0.3
+e_r_acc: 0.6
+kalman_filter_averaging_frames: 5
+
+frames_force_dynamic: 6
+frames_force_dynamic_check_range: 15
+dynamic_consistency_threshold: 2
+
+constrain_size: false
+target_object_size: [0.6, 0.6, 1.8]
+max_dynamic_bbox_size: [3.0, 3.0, 3.0]
+
+# Unused in lidar mode, kept for shared parsing.
+depth_filter_margin: 0
+depth_skip_pixel: 1

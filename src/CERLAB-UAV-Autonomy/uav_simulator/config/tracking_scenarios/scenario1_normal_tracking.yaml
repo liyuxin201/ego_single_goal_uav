@@ -1,0 +1,95 @@
+scenario:
+  id: scenario1
+  name: normal_tracking
+  world: worlds/tracking/base_empty.world
+  duration: 30.0
+  z_track: 1.5
+  update_rate: 30.0
+  run_id: default
+
+uav:
+  model: px4_iris_mid360
+  initial_pose: [-9.5, 0.0, 0.0, 0.0]
+
+target:
+  type: ground_target
+  model_name: tracking_ground_target
+  radius: 0.35
+  height: 0.4
+  trajectory:
+    loop: false
+    samples: 200
+    segments:
+      - type: waypoint
+        speed: 0.8
+        points:
+          - [-8.0, 0.0, 0.0]
+          - [-1.6, 0.0, 0.0]
+      - type: sine
+        speed: 0.9
+        start: [-1.6, 0.0, 0.0]
+        end: [5.6, 0.0, 0.0]
+        amplitude: 1.5
+        cycles: 1.0
+      - type: waypoint
+        speed: 1.2
+        points:
+          - [5.6, 0.0, 0.0]
+          - [15.2, 0.0, 0.0]
+      - type: waypoint
+        speed: 0.6
+        points:
+          - [15.2, 0.0, 0.0]
+          - [18.8, 0.0, 0.0]
+
+dynamic_obstacles: []
+
+static_obstacles_eval:
+  - name: pillar_1
+    type: cylinder
+    position: [2.0, 3.0, 0.0]
+    radius: 0.35
+    height: 3.0
+  - name: pillar_2
+    type: cylinder
+    position: [5.0, -2.0, 0.0]
+    radius: 0.35
+    height: 3.0
+  - name: pillar_3
+    type: cylinder
+    position: [-3.0, 2.0, 0.0]
+    radius: 0.35
+    height: 3.0
+  - name: pillar_4
+    type: cylinder
+    position: [-6.0, -3.0, 0.0]
+    radius: 0.35
+    height: 3.0
+  - name: wall_x_min
+    type: box
+    center: [-12.125, 0.0, 1.5]
+    size: [0.25, 16.25, 3.0]
+  - name: wall_x_max
+    type: box
+    center: [20.125, 0.0, 1.5]
+    size: [0.25, 16.25, 3.0]
+  - name: wall_y_min
+    type: box
+    center: [4.0, -8.125, 1.5]
+    size: [32.25, 0.25, 3.0]
+  - name: wall_y_max
+    type: box
+    center: [4.0, 8.125, 1.5]
+    size: [32.25, 0.25, 3.0]
+
+evaluation:
+  uav_radius: 0.35
+  target_radius: 0.35
+  collision_margin: 0.05
+  safety_margin: 0.30
+  tracking:
+    desired_distance: 1.5
+    min_distance: 0.5
+    max_distance: 2.0
+    max_relative_speed: 1.0
+  output_dir: /tmp/uav_tracking_eval

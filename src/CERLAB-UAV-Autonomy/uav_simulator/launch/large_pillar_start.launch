@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="verbose" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <arg name="x" default="-23.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.1"/>
+  <arg name="R" default="0.0"/>
+  <arg name="P" default="0.0"/>
+  <arg name="Y" default="0.0"/>
+
+  <arg name="vehicle_model" default="px4_iris_lidar360"/>
+  <arg name="sdf_model" default="$(find uav_simulator)/urdf/px4_iris_lidar360.sdf"/>
+  <arg name="world_name" default="$(find uav_simulator)/worlds/large_pillar/large_pillar_dynamic_only.world"/>
+
+  <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
+  <arg name="respawn_mavros" default="false"/>
+  <arg name="px4_root" default="$(find uav_simulator)/../PX4-Autopilot"/>
+  <arg name="px4_sim_model" default="gazebo-classic_iris"/>
+  <arg name="px4_instance" default="0"/>
+
+  <arg name="publish_static_obstacles" default="false"/>
+  <arg name="dynamic_obstacle_topic" default="/large_pillar/dynamic_obstacles"/>
+  <arg name="dynamic_obstacle_state_input" default="/large_pillar/dynamic_obstacle_states"/>
+  <arg name="dynamic_obstacle_rate" default="30.0"/>
+  <arg name="dynamic_obstacle_stale_timeout" default="2.0"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find uav_simulator)/models:$(find uav_simulator)/../PX4-SITL_gazebo-classic/models:$(find livox_laser_simulation)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="$(find uav_simulator)/urdf:$(optenv GAZEBO_RESOURCE_PATH)"/>
+  <env name="GAZEBO_PLUGIN_PATH" value="$(find uav_simulator)/plugins:$(find uav_simulator)/../PX4-SITL_gazebo-classic/build:$(find livox_laser_simulation)/../../../devel/lib:$(optenv GAZEBO_PLUGIN_PATH)"/>
+
+  <node name="sitl"
+        pkg="uav_simulator"
+        type="start_px4_sitl.py"
+        args="--px4-root $(arg px4_root) --sim-model $(arg px4_sim_model) --instance $(arg px4_instance)"
+        required="true"
+        output="screen"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="world_name" value="$(arg world_name)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <node name="spawn_px4_model"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        args="-sdf -file $(arg sdf_model) -model $(arg vehicle_model) -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"
+        respawn="false"
+        output="screen"/>
+
+  <include file="$(find mavros)/launch/px4.launch">
+    <arg name="gcs_url" value=""/>
+    <arg name="fcu_url" value="$(arg fcu_url)"/>
+    <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+  </include>
+
+  <include file="$(find uav_simulator)/launch/setupTF.launch">
+    <arg name="pose_topic" value="/mavros/local_position/pose"/>
+  </include>
+
+  <node name="dynamic_pillar_state_node" pkg="uav_simulator" type="dynamic_pillar_state_node" output="screen">
+    <param name="input_topic" value="$(arg dynamic_obstacle_state_input)"/>
+    <param name="output_topic" value="$(arg dynamic_obstacle_topic)"/>
+    <param name="publish_static_obstacles" value="$(arg publish_static_obstacles)"/>
+    <param name="rate" value="$(arg dynamic_obstacle_rate)"/>
+    <param name="stale_timeout" value="$(arg dynamic_obstacle_stale_timeout)"/>
+  </node>
+</launch>

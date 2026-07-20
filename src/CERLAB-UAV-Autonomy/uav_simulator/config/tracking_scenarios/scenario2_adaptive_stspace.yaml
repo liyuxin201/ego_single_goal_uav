@@ -1,0 +1,208 @@
+scenario:
+  id: scenario2
+  name: adaptive_stspace_obstacle_filtering
+  world: worlds/tracking/base_empty.world
+  duration: 32.0
+  z_track: 1.5
+  update_rate: 30.0
+  run_id: default
+
+uav:
+  model: px4_iris_mid360
+  initial_pose: [-9.5, 0.0, 0.0, 0.0]
+
+target:
+  type: ground_target
+  model_name: tracking_ground_target
+  radius: 0.35
+  height: 0.4
+  trajectory:
+    loop: false
+    samples: 300
+    segments:
+      - type: sine
+        speed: 0.9
+        start: [-10.0, -2.0, 0.0]
+        end: [10.0, -2.0, 0.0]
+        amplitude: 1.0
+        cycles: 1.0
+
+dynamic_obstacles:
+  - name: obs_relevant_1
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      start_delay: 2.5
+      loop: false
+      samples: 200
+      segments:
+        - type: waypoint
+          speed: 1.2
+          points:
+            - [-4.5, -8.0, 0.0]
+            - [-4.5, 4.0, 0.0]
+  - name: obs_relevant_2
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      start_delay: 9.0
+      loop: false
+      samples: 200
+      segments:
+        - type: waypoint
+          speed: 1.0
+          points:
+            - [2.8, 5.0, 0.0]
+            - [2.8, -6.0, 0.0]
+  - name: obs_relevant_3
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      start_delay: 9.5
+      loop: false
+      samples: 200
+      segments:
+        - type: waypoint
+          speed: 0.8
+          points:
+            - [1.0, -6.0, 0.0]
+            - [5.5, -1.0, 0.0]
+  - name: obs_unrelated_1
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 0.7
+          points:
+            - [-11.0, 6.5, 0.0]
+            - [-3.0, 6.5, 0.0]
+  - name: obs_unrelated_2
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 1.0
+          points:
+            - [-8.0, 8.0, 0.0]
+            - [0.0, 8.0, 0.0]
+  - name: obs_unrelated_3
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 0.9
+          points:
+            - [-3.0, 7.2, 0.0]
+            - [5.0, 7.2, 0.0]
+  - name: obs_unrelated_4
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 1.1
+          points:
+            - [1.0, 8.7, 0.0]
+            - [9.0, 8.7, 0.0]
+  - name: obs_unrelated_5
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 0.6
+          points:
+            - [-10.0, 9.0, 0.0]
+            - [-1.0, 9.0, 0.0]
+  - name: obs_unrelated_6
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 0.8
+          points:
+            - [3.0, 6.3, 0.0]
+            - [11.0, 6.3, 0.0]
+  - name: obs_unrelated_7
+    model: cylinder
+    radius: 0.35
+    height: 1.8
+    trajectory:
+      loop: true
+      samples: 100
+      segments:
+        - type: waypoint
+          speed: 1.2
+          points:
+            - [-6.0, 7.8, 0.0]
+            - [6.0, 7.8, 0.0]
+
+static_obstacles_eval:
+  - name: wall_x_min
+    type: box
+    center: [-12.625, 0.0, 1.5]
+    size: [0.25, 20.25, 3.0]
+  - name: wall_x_max
+    type: box
+    center: [12.625, 0.0, 1.5]
+    size: [0.25, 20.25, 3.0]
+  - name: wall_y_min
+    type: box
+    center: [0.0, -10.125, 1.5]
+    size: [25.25, 0.25, 3.0]
+  - name: wall_y_max
+    type: box
+    center: [0.0, 10.125, 1.5]
+    size: [25.25, 0.25, 3.0]
+  - name: pillar_left
+    type: cylinder
+    position: [-6.0, 2.5, 0.0]
+    radius: 0.35
+    height: 3.0
+  - name: pillar_mid
+    type: cylinder
+    position: [0.0, 3.0, 0.0]
+    radius: 0.35
+    height: 3.0
+  - name: pillar_right
+    type: cylinder
+    position: [7.0, -5.0, 0.0]
+    radius: 0.35
+    height: 3.0
+
+evaluation:
+  uav_radius: 0.35
+  target_radius: 0.35
+  collision_margin: 0.05
+  safety_margin: 0.30
+  tracking:
+    desired_distance: 3.0
+    min_distance: 2.0
+    max_distance: 4.5
+    max_relative_speed: 1.0
+  output_dir: /tmp/uav_tracking_eval

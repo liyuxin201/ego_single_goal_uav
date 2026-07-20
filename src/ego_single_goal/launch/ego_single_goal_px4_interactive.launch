@@ -1,0 +1,187 @@
+<launch>
+  <arg name="auto_detect" default="false"/>
+  <arg name="rviz" default="true"/>
+  <arg name="cloud_topic" default="/world_cloud"/>
+  <arg name="odom_topic" default="/mavros/local_position/odom"/>
+  <arg name="pose_topic" default="/mavros/local_position/pose"/>
+  <arg name="frame_id" default="map"/>
+  <arg name="target_ready" default="true"/>
+  <arg name="goal_input_topic" default="/task_a/final_goal"/>
+  <arg name="goal_input_use_pose_z" default="false"/>
+
+  <arg name="dynamic_collision_safety_margin" default="0.10"/>
+  <arg name="robot_size_x" default="0.40"/>
+  <arg name="robot_size_y" default="0.40"/>
+  <arg name="robot_size_z" default="0.30"/>
+  <arg name="bspline_distance_threshold" default="0.10"/>
+  <arg name="bspline_distance_threshold_dynamic" default="0.10"/>
+  <arg name="poly_initial_radius" default="0.25"/>
+  <arg name="poly_constraint_radius" default="0.25"/>
+  <arg name="task_a_safe_radius" default="0.28"/>
+  <arg name="require_offboard_before_goal_publish" default="true"/>
+  <arg name="require_offboard_before_planner_target" default="true"/>
+  <arg name="takeoff_before_task" default="true"/>
+  <arg name="takeoff_height" default="0.6"/>
+  <arg name="takeoff_reach_radius" default="0.1"/>
+  <arg name="use_candidate_guide_path" default="true"/>
+  <arg name="mavros_state_topic" default="/mavros/state"/>
+  <arg name="use_yaw_control" default="true"/>
+  <arg name="no_yaw_turning" default="true"/>
+
+  <arg name="manual_click_topic" default="/clicked_point"/>
+  <arg name="manual_click_radius" default="0.80"/>
+  <arg name="manual_cluster_tolerance" default="0.25"/>
+  <arg name="manual_min_cluster_points" default="4"/>
+  <arg name="manual_model_kind" default="auto"/>
+  <arg name="manual_click_sequence" default="true"/>
+  <arg name="manual_wall_expand_enabled" default="true"/>
+  <arg name="manual_wall_expand_length" default="3.6"/>
+  <arg name="manual_wall_expand_width" default="1.0"/>
+  <arg name="manual_wall_expand_tolerance" default="0.35"/>
+  <arg name="manual_publish_guide_path" default="false"/>
+  <arg name="manual_cylinder_dimension_margin" default="0.35"/>
+  <arg name="manual_cylinder_aspect_margin" default="1.0"/>
+  <arg name="manual_priority_window_margin" default="0.35"/>
+  <arg name="manual_cluster_point_ratio" default="0.60"/>
+  <arg name="wall_face_enabled" default="true"/>
+  <arg name="wall_face_inlier_threshold" default="0.10"/>
+  <arg name="wall_face_min_points" default="6"/>
+  <arg name="wall_face_min_length" default="0.35"/>
+  <arg name="wall_face_max_thickness" default="0.30"/>
+  <arg name="wall_max_faces" default="2"/>
+  <arg name="wall_infer_length_margin" default="0.20"/>
+  <arg name="wall_infer_height_margin" default="0.05"/>
+  <arg name="wall_infer_depth_from_face" default="true"/>
+  <arg name="wall_size_from_cloud" default="true"/>
+  <arg name="select_nearest_gap" default="true"/>
+  <arg name="wall_observer_uses_odom" default="true"/>
+  <arg name="gap_width_min" default="0.35"/>
+  <arg name="gap_width_max" default="1.60"/>
+  <arg name="require_opposite_cylinders" default="true"/>
+  <arg name="cylinder_wall_lateral_overlap" default="0.45"/>
+  <arg name="use_odom_front_roi" default="true"/>
+  <arg name="cloud_xy_filter_enabled" default="false"/>
+  <arg name="cloud_x_min" default="-1.0"/>
+  <arg name="cloud_x_max" default="15.0"/>
+  <arg name="cloud_y_min" default="-1.0"/>
+  <arg name="cloud_y_max" default="15.0"/>
+  <arg name="forward_min" default="0.0"/>
+  <arg name="forward_max" default="4.0"/>
+  <arg name="lateral_min" default="-0.2"/>
+  <arg name="lateral_max" default="4.0"/>
+  <arg name="append_final_goal" default="true"/>
+  <arg name="update_goal_from_guide" default="true"/>
+  <arg name="calibration_file" default="$(optenv HOME /home/uavx)/.ros/task_a_gap_detector_calibration.yaml"/>
+  <arg name="use_saved_manual_calibration" default="true"/>
+  <arg name="save_manual_calibration" default="true"/>
+  <arg name="saved_prior_enabled" default="true"/>
+  <arg name="saved_prior_fast_lock" default="false"/>
+  <arg name="saved_prior_prefer_roi" default="true"/>
+  <arg name="saved_prior_margin" default="0.45"/>
+  <arg name="saved_prior_z_margin" default="0.25"/>
+  <arg name="saved_prior_gate_required" default="true"/>
+  <arg name="saved_prior_max_center_shift" default="0.45"/>
+  <arg name="saved_prior_max_model_shift" default="0.65"/>
+  <arg name="saved_prior_max_wall_yaw_shift" default="0.35"/>
+  <arg name="publish_saved_calibration_on_startup" default="false"/>
+
+  <arg name="refine_duration" default="3.0"/>
+  <arg name="min_refine_matches" default="12"/>
+  <arg name="max_refine_duration" default="5.0"/>
+  <arg name="stable_center_threshold" default="0.20"/>
+  <arg name="stable_gap_threshold" default="0.18"/>
+
+  <include file="$(find ego_single_goal)/launch/ego_single_goal_px4.launch">
+    <arg name="rviz" value="$(arg rviz)"/>
+    <arg name="cloud_topic" value="$(arg cloud_topic)"/>
+    <arg name="odom_topic" value="$(arg odom_topic)"/>
+    <arg name="pose_topic" value="$(arg pose_topic)"/>
+    <arg name="frame_id" value="$(arg frame_id)"/>
+
+    <arg name="dynamic_collision_safety_margin" value="$(arg dynamic_collision_safety_margin)"/>
+    <arg name="robot_size_x" value="$(arg robot_size_x)"/>
+    <arg name="robot_size_y" value="$(arg robot_size_y)"/>
+    <arg name="robot_size_z" value="$(arg robot_size_z)"/>
+    <arg name="bspline_distance_threshold" value="$(arg bspline_distance_threshold)"/>
+    <arg name="bspline_distance_threshold_dynamic" value="$(arg bspline_distance_threshold_dynamic)"/>
+    <arg name="poly_initial_radius" value="$(arg poly_initial_radius)"/>
+    <arg name="poly_constraint_radius" value="$(arg poly_constraint_radius)"/>
+    <arg name="task_a_safe_radius" value="$(arg task_a_safe_radius)"/>
+    <arg name="task_a_require_offboard_before_goal_publish" value="$(arg require_offboard_before_goal_publish)"/>
+    <arg name="require_offboard_before_planner_target" value="$(arg require_offboard_before_planner_target)"/>
+    <arg name="task_a_takeoff_before_task" value="$(arg takeoff_before_task)"/>
+    <arg name="task_a_takeoff_height" value="$(arg takeoff_height)"/>
+    <arg name="task_a_takeoff_reach_radius" value="$(arg takeoff_reach_radius)"/>
+    <arg name="task_a_use_candidate_guide_path" value="$(arg use_candidate_guide_path)"/>
+    <arg name="mavros_state_topic" value="$(arg mavros_state_topic)"/>
+    <arg name="use_yaw_control" value="$(arg use_yaw_control)"/>
+    <arg name="no_yaw_turning" value="$(arg no_yaw_turning)"/>
+    <arg name="task_a_target_ready" value="$(arg target_ready)"/>
+    <arg name="task_a_goal_input_topic" value="$(arg goal_input_topic)"/>
+    <arg name="task_a_goal_input_use_pose_z" value="$(arg goal_input_use_pose_z)"/>
+    <arg name="task_a_auto_detect" value="$(arg auto_detect)"/>
+    <arg name="task_a_manual_click_enabled" value="true"/>
+    <arg name="task_a_manual_click_topic" value="$(arg manual_click_topic)"/>
+    <arg name="task_a_manual_click_radius" value="$(arg manual_click_radius)"/>
+    <arg name="task_a_manual_cluster_tolerance" value="$(arg manual_cluster_tolerance)"/>
+    <arg name="task_a_manual_min_cluster_points" value="$(arg manual_min_cluster_points)"/>
+    <arg name="task_a_manual_model_kind" value="$(arg manual_model_kind)"/>
+    <arg name="task_a_manual_click_sequence" value="$(arg manual_click_sequence)"/>
+    <arg name="task_a_manual_wall_expand_enabled" value="$(arg manual_wall_expand_enabled)"/>
+    <arg name="task_a_manual_wall_expand_length" value="$(arg manual_wall_expand_length)"/>
+    <arg name="task_a_manual_wall_expand_width" value="$(arg manual_wall_expand_width)"/>
+    <arg name="task_a_manual_wall_expand_tolerance" value="$(arg manual_wall_expand_tolerance)"/>
+    <arg name="task_a_manual_publish_guide_path" value="$(arg manual_publish_guide_path)"/>
+    <arg name="task_a_manual_cylinder_dimension_margin" value="$(arg manual_cylinder_dimension_margin)"/>
+    <arg name="task_a_manual_cylinder_aspect_margin" value="$(arg manual_cylinder_aspect_margin)"/>
+    <arg name="task_a_manual_priority_window_margin" value="$(arg manual_priority_window_margin)"/>
+    <arg name="task_a_manual_cluster_point_ratio" value="$(arg manual_cluster_point_ratio)"/>
+    <arg name="task_a_wall_face_enabled" value="$(arg wall_face_enabled)"/>
+    <arg name="task_a_wall_face_inlier_threshold" value="$(arg wall_face_inlier_threshold)"/>
+    <arg name="task_a_wall_face_min_points" value="$(arg wall_face_min_points)"/>
+    <arg name="task_a_wall_face_min_length" value="$(arg wall_face_min_length)"/>
+    <arg name="task_a_wall_face_max_thickness" value="$(arg wall_face_max_thickness)"/>
+    <arg name="task_a_wall_max_faces" value="$(arg wall_max_faces)"/>
+    <arg name="task_a_wall_infer_length_margin" value="$(arg wall_infer_length_margin)"/>
+    <arg name="task_a_wall_infer_height_margin" value="$(arg wall_infer_height_margin)"/>
+    <arg name="task_a_wall_infer_depth_from_face" value="$(arg wall_infer_depth_from_face)"/>
+    <arg name="task_a_wall_size_from_cloud" value="$(arg wall_size_from_cloud)"/>
+    <arg name="task_a_select_nearest_gap" value="$(arg select_nearest_gap)"/>
+    <arg name="task_a_wall_observer_uses_odom" value="$(arg wall_observer_uses_odom)"/>
+    <arg name="task_a_gap_width_min" value="$(arg gap_width_min)"/>
+    <arg name="task_a_gap_width_max" value="$(arg gap_width_max)"/>
+    <arg name="task_a_require_opposite_cylinders" value="$(arg require_opposite_cylinders)"/>
+    <arg name="task_a_cylinder_wall_lateral_overlap" value="$(arg cylinder_wall_lateral_overlap)"/>
+    <arg name="task_a_use_odom_front_roi" value="$(arg use_odom_front_roi)"/>
+    <arg name="task_a_cloud_xy_filter_enabled" value="$(arg cloud_xy_filter_enabled)"/>
+    <arg name="task_a_cloud_x_min" value="$(arg cloud_x_min)"/>
+    <arg name="task_a_cloud_x_max" value="$(arg cloud_x_max)"/>
+    <arg name="task_a_cloud_y_min" value="$(arg cloud_y_min)"/>
+    <arg name="task_a_cloud_y_max" value="$(arg cloud_y_max)"/>
+    <arg name="task_a_forward_min" value="$(arg forward_min)"/>
+    <arg name="task_a_forward_max" value="$(arg forward_max)"/>
+    <arg name="task_a_lateral_min" value="$(arg lateral_min)"/>
+    <arg name="task_a_lateral_max" value="$(arg lateral_max)"/>
+    <arg name="task_a_append_final_goal" value="$(arg append_final_goal)"/>
+    <arg name="task_a_update_goal_from_guide" value="$(arg update_goal_from_guide)"/>
+    <arg name="task_a_calibration_file" value="$(arg calibration_file)"/>
+    <arg name="task_a_use_saved_manual_calibration" value="$(arg use_saved_manual_calibration)"/>
+    <arg name="task_a_save_manual_calibration" value="$(arg save_manual_calibration)"/>
+    <arg name="task_a_saved_prior_enabled" value="$(arg saved_prior_enabled)"/>
+    <arg name="task_a_saved_prior_fast_lock" value="$(arg saved_prior_fast_lock)"/>
+    <arg name="task_a_saved_prior_prefer_roi" value="$(arg saved_prior_prefer_roi)"/>
+    <arg name="task_a_saved_prior_margin" value="$(arg saved_prior_margin)"/>
+    <arg name="task_a_saved_prior_z_margin" value="$(arg saved_prior_z_margin)"/>
+    <arg name="task_a_saved_prior_gate_required" value="$(arg saved_prior_gate_required)"/>
+    <arg name="task_a_saved_prior_max_center_shift" value="$(arg saved_prior_max_center_shift)"/>
+    <arg name="task_a_saved_prior_max_model_shift" value="$(arg saved_prior_max_model_shift)"/>
+    <arg name="task_a_saved_prior_max_wall_yaw_shift" value="$(arg saved_prior_max_wall_yaw_shift)"/>
+    <arg name="task_a_publish_saved_calibration_on_startup" value="$(arg publish_saved_calibration_on_startup)"/>
+
+    <arg name="task_a_refine_duration" value="$(arg refine_duration)"/>
+    <arg name="task_a_min_refine_matches" value="$(arg min_refine_matches)"/>
+    <arg name="task_a_max_refine_duration" value="$(arg max_refine_duration)"/>
+    <arg name="task_a_stable_center_threshold" value="$(arg stable_center_threshold)"/>
+    <arg name="task_a_stable_gap_threshold" value="$(arg stable_gap_threshold)"/>
+  </include>
+</launch>

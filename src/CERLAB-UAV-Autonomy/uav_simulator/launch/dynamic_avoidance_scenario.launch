@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="verbose" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <arg name="start_avoidance" default="false"/>
+  <arg name="start_rviz" default="false"/>
+  <arg name="avoidance_launch" default="$(find autonomous_flight)/launch/dynamic_navigation_lidar.launch"/>
+
+  <arg name="world_name" default="$(find uav_simulator)/worlds/large_pillar/large_pillar_dynamic_only.world"/>
+
+  <arg name="point_cloud_topic" default="/livox/lidar"/>
+  <arg name="odom_topic" default="/CERLAB/quadcopter/odom"/>
+  <arg name="pose_topic" default="/CERLAB/quadcopter/pose"/>
+
+  <arg name="x" default="-23.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.1"/>
+  <arg name="Y" default="0.0"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find uav_simulator)/models:$(find livox_laser_simulation)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="GAZEBO_PLUGIN_PATH" value="$(find uav_simulator)/plugins:$(find uav_simulator)/../PX4-SITL_gazebo-classic/build:$(find livox_laser_simulation)/../../../devel/lib:$(optenv GAZEBO_PLUGIN_PATH)"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="world_name" value="$(arg world_name)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <param name="robot_description" command="cat '$(find uav_simulator)/urdf/quadcopter.urdf'"/>
+
+  <node pkg="topic_tools" type="throttle" name="gt_pose_throttle" args="messages /CERLAB/quadcopter/pose_raw 30 /CERLAB/quadcopter/pose"/>
+  <node pkg="topic_tools" type="throttle" name="gt_vel_throttle" args="messages /CERLAB/quadcopter/vel_raw 30 /CERLAB/quadcopter/vel"/>
+  <node pkg="topic_tools" type="throttle" name="gt_acc_throttle" args="messages /CERLAB/quadcopter/acc_raw 30 /CERLAB/quadcopter/acc"/>
+  <node pkg="topic_tools" type="throttle" name="gt_odom_throttle" args="messages /CERLAB/quadcopter/odom_raw 30 /CERLAB/quadcopter/odom"/>
+
+  <node name="spawn_gazebo_model"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        args="-urdf -param robot_description -model quadcopter -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg Y)"
+        respawn="false"/>
+
+  <include file="$(find uav_simulator)/launch/setupTF.launch">
+    <arg name="pose_topic" value="$(arg pose_topic)"/>
+  </include>
+
+  <include file="$(find uav_simulator)/launch/rviz.launch" if="$(arg start_rviz)"/>
+
+  <include file="$(arg avoidance_launch)" if="$(arg start_avoidance)">
+    <arg name="point_cloud_topic" value="$(arg point_cloud_topic)"/>
+    <arg name="odom_topic" value="$(arg odom_topic)"/>
+    <arg name="pose_topic" value="$(arg pose_topic)"/>
+  </include>
+</launch>

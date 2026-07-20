@@ -1,0 +1,19 @@
+<launch>
+	<arg name="takeoff_height" default="1.0" />
+	<arg name="listen_click_goal" default="false" />
+	<arg name="external_pose_target_topic" default="" />
+	<arg name="external_offboard_setpoint_topic" default="/mavros/setpoint_raw/local" />
+	<arg name="external_offboard_timeout" default="0.3" />
+
+	<rosparam file="$(find autonomous_flight)/cfg/takeoff_and_hover/flight_base.yaml" ns="autonomous_flight"/>
+	<param name="/autonomous_flight/takeoff_height" value="$(arg takeoff_height)" />
+	<param name="/autonomous_flight/use_px4_offboard" value="true" />
+	<param name="/autonomous_flight/release_control_on_goal" value="true" />
+	<param name="/autonomous_flight/enable_control_output" value="true" />
+	<param name="/autonomous_flight/listen_click_goal" value="$(arg listen_click_goal)" />
+	<param name="/autonomous_flight/external_pose_target_topic" value="$(arg external_pose_target_topic)" />
+	<param name="/autonomous_flight/external_offboard_setpoint_topic" value="$(arg external_offboard_setpoint_topic)" />
+	<param name="/autonomous_flight/external_offboard_timeout" value="$(arg external_offboard_timeout)" />
+
+	<node pkg="autonomous_flight" type="takeoff_and_hover_node" name="takeoff_and_hover_px4_node" output="screen" />
+</launch>

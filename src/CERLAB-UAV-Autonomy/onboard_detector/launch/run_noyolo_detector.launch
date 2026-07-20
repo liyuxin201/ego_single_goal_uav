@@ -1,0 +1,3 @@
+<launch>
+    <include file="$(find onboard_detector)/launch/run_detector.launch" />
+</launch>
