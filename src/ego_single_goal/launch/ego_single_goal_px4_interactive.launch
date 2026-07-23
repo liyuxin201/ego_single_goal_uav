@@ -24,6 +24,7 @@
   <arg name="takeoff_height" default="0.6"/>
   <arg name="takeoff_reach_radius" default="0.1"/>
   <arg name="use_candidate_guide_path" default="true"/>
+  <arg name="auto_task_a_waypoints" default="true"/>
   <arg name="mavros_state_topic" default="/mavros/state"/>
   <arg name="use_yaw_control" default="true"/>
   <arg name="no_yaw_turning" default="true"/>
@@ -113,6 +114,7 @@
     <arg name="task_a_takeoff_height" value="$(arg takeoff_height)"/>
     <arg name="task_a_takeoff_reach_radius" value="$(arg takeoff_reach_radius)"/>
     <arg name="task_a_use_candidate_guide_path" value="$(arg use_candidate_guide_path)"/>
+    <arg name="auto_task_a_waypoints" value="$(arg auto_task_a_waypoints)"/>
     <arg name="mavros_state_topic" value="$(arg mavros_state_topic)"/>
     <arg name="use_yaw_control" value="$(arg use_yaw_control)"/>
     <arg name="no_yaw_turning" value="$(arg no_yaw_turning)"/>

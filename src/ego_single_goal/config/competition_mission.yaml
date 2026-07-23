@@ -1,0 +1,48 @@
+# Mission manager defaults. Tune the waypoint lists on-site before flight.
+
+frame_id: map
+odom_topic: /mavros/local_position/odom
+mavros_state_topic: /mavros/state
+goal_topic: /move_base_simple/goal
+guide_path_topic: /competition/guide_path
+
+task_a_guide_path_topic: /task_a/guide_path
+task_a_candidate_guide_path_topic: /task_a/candidate_guide_path
+task_a_goal_input_topic: /task_a/final_goal
+
+wait_for_offboard: true
+loop_rate_hz: 10.0
+goal_republish_period: 1.0
+tf_timeout: 0.15
+
+takeoff_enabled: true
+takeoff_height: 1.0
+takeoff_reach_radius: 0.15
+
+task_a_send_goal_on_start: true
+task_a_use_candidate_path: false
+task_a_reach_radius: 0.35
+task_a_goal_x: 3.120975971221924
+task_a_goal_y: -5.956602573394775
+task_a_goal_z: 1.0
+
+# B is intentionally disabled for now. Add B entry/exit points here later.
+task_b_enabled: false
+task_b_reach_radius: 0.45
+task_b_waypoints: []
+
+# Fill these with C-zone entry/exit or corridor points before running a real flight.
+task_c_enabled: true
+task_c_reach_radius: 0.50
+task_c_waypoints: []
+
+task_d_enabled: true
+task_d_prepare_reach_radius: 0.40
+task_d_observation_reach_radius: 0.25
+task_d_traverse_reach_radius: 0.30
+gate_action_name: /gate_module/plan
+gate_action_wait_timeout: 2.0
+
+# D-zone pre-observation / handoff point. Update this for the real field.
+task_d_prepare_waypoints:
+  - [10.361700057983398, -5.367546081542969, 1.0]

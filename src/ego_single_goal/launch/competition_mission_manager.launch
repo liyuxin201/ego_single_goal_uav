@@ -1,0 +1,10 @@
+<launch>
+  <arg name="config_file" default="$(find ego_single_goal)/config/competition_mission.yaml"/>
+
+  <node pkg="ego_single_goal"
+        type="competition_mission_manager"
+        name="competition_mission_manager"
+        output="screen">
+    <rosparam command="load" file="$(arg config_file)"/>
+  </node>
+</launch>
